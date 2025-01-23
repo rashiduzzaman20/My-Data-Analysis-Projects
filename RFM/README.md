@@ -315,7 +315,8 @@ ORDER BY COUNT(*) DESC;
 | At-Risk Customers   | 2              |
 | Recent Customers    | 1              |
   
-#### WHAT TYPE OF ACTION NEEDED FOR EACH CUSTOMER ACCORDING TO THEIR BEHAVIOR(CUSTOMER_SEGMENT). 
+
+#### What type of action needed for each customer according to their behavior ( CUSTOMER_SEGMENT).
 ```SQL
 SELECT CUSTOMERNAME, CUSTOMER_SEGMENT, 
 		CASE 
