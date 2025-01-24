@@ -215,3 +215,28 @@ SELECT CUSTOMERNAME, CUSTOMER_SEGMENT,
             WHEN CUSTOMER_SEGMENT = 'Lost Customers' THEN 'Attempt to win back with exclusive or personalized offers.'
 		END AS ACTION_NEEDED
 FROM CTE1;
+
+-- This part for SCORE.CSV file
+WITH RFM_INITIAL_CALC AS (
+   SELECT
+       CUSTOMERNAME,
+       ROUND(SUM(SALES), 0) AS MonetaryValue,
+       COUNT(DISTINCT ORDERNUMBER) AS Frequency,
+       DATEDIFF((SELECT MAX(STR_TO_DATE(ORDERDATE, '%d/%m/%y')) FROM SALES_DATA), 
+                MAX(STR_TO_DATE(ORDERDATE, '%d/%m/%y'))) AS Recency
+   FROM SALES_DATA
+   GROUP BY CUSTOMERNAME
+),
+RFM_SCORE_CALC AS (
+   SELECT 
+       CUSTOMERNAME,
+       MonetaryValue,
+       Frequency,
+       Recency,
+       NTILE(5) OVER (ORDER BY Recency DESC) AS RFM_RECENCY_SCORE,
+       NTILE(5) OVER (ORDER BY Frequency ASC) AS RFM_FREQUENCY_SCORE,
+       NTILE(5) OVER (ORDER BY MonetaryValue ASC) AS RFM_MONETARY_SCORE
+   FROM RFM_INITIAL_CALC
+)
+SELECT * 
+FROM RFM_SCORE_CALC;
